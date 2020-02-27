@@ -3,16 +3,25 @@ echo "Start bet with stake 100"
 #Constant
 BET=1
 WIN=0
-LOSS=1
+LOSS=0
 #Variables
 stake=100
-#Generate two random value
-checkGambler=$((RANDOM%2))
-if((checkGambler == WIN))
-then
-	echo "You stake  is win"
-	stake=$((stake+BET))
-else
-	echo "You loss stake"
-	stake=$((stake-BET))
-fi
+half_stake=$(($stake/2))
+full_stake=$(($half_stake+$stake))
+while ((half_stake < stake && full_stake > stake)) 
+do 
+	checkGambler=$((RANDOM%2))
+	case $checkGambler in
+		0)
+			stake=$((stake+BET))
+			((WIN++))
+		;;
+		1)
+			stake=$((stake-BET))
+			((LOSS++))
+		;;
+	esac
+done
+echo "you resigned the day"
+echo "Present stake"=$stake
+
