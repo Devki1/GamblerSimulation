@@ -10,7 +10,6 @@ stake=100
 wincount=0
 losscount=0
 tempStake=$stake
-tempStake1=$stake
 for((day=1;day<=20;day++))
 do
 	stake=100
@@ -31,26 +30,56 @@ do
 			;;
 		esac
 	done	
-case $stake in
+	case $stake in
 	$full_stake)
 			echo "you won for the day"
 			echo "Total win amount:" $half_stake
 			tempStake=$((tempStake+half_stake))
-			stakeWinArray[$((count++))]=$tempStake
+			stakeArray[$((count++))]=$tempStake
 			((wincount++))
 			;;
 	$loss_stake)
 			echo "you loss"
 			echo "Total loss amount:" $half_stake
-			tempStake1=$((tempStake1-half_stake))
-			stakeLossArray[$((count++))]=$tempStake1
+			tempStake=$((tempStake-half_stake))
+			stakeArray[$((count++))]=$tempStake
 			((losscount++))
 			;;
-esac
+	esac
 done
-echo ${stakeWinArray[@]}
-echo ${stakeLossArray[@]}
+echo ${stakeArray[@]}
+echo ${stakeArray[@]}
 echo "no of day loss" $losscount
 echo "you lost by:" $((losscount*half_stake))
 echo "no of day win:" $wincount
 echo "you win by:"$((wincount*half_stake))
+echo "${stakeArray[@]}"
+#Check maximum  won and loss
+MaximumWon=${stakeArray[1]}
+MaximumLoss=${stakeArray[1]}
+for stake in ${stakeArray[@]}
+do
+	if (( $stake < $MaximumLoss ))
+	then
+		MaximumLoss=$stake
+	elif (($stake > $MaximumWon ))
+	then
+		MaximumWon=$stake
+	fi
+done
+echo $MaximumLoss
+echo $MaximumWon
+countday=0
+#Check Luckiest and unLuckiest day
+for countday in ${!stakeArray[@]}
+do
+	if ((${stakeArray[countday]} == $MaximumLoss))
+	then
+			((countday++))
+			echo "unLuckiest day:" $countday
+	elif  ((${stakeArray[countday]} == $MaximumWon))
+	then
+			((countday++))
+			echo "Luckiest day:" $countday
+	fi
+done
